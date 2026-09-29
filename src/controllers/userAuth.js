@@ -1,3 +1,4 @@
+const redisClient = require('../config/redis');
 const User = require('../models/user')
 const validate = require('../utils/validator')
 const bcrypt = require('bcrypt');
@@ -15,6 +16,7 @@ const register = async (req,res) => {
         // password hashing
         const hashedPassword = await bcrypt.hash(password,10);
         req.body.password = hashedPassword;
+        req.body.role = 'user';
         // User Registeration
         const registeredUser = await User.create(req.body)
         // Token creation an sending while registering the user
@@ -54,5 +56,27 @@ const login = async(req,res) => {
     }
 }
 
-module.exports = {register,login};
+// User Logout Controller
+const logout = async (req,res) => {
+    try {
+        // Token validation will be validate in middleware
+
+        // Extracting the token from the cookie
+        const {token} =  req.cookies;
+        // Extracting payload from the token
+        const payload = jwt.decode(token);
+        // Adding the token in Redis Blocklist and setting it's expiry time
+        await redisClient.set(`token:${token}`,'Blocked');
+        await redisClient.expireAt(`token:${token}`, payload.exp);
+        // Sending the Invalid Token in Cookie
+        res.cookie("token",null, {expireAt : new Date (Date.now())});
+        res.send(`User Logged Out Successfully`)
+
+    } catch (error) {
+        res.status(503).send(`Error in Logout :${error.message}`);
+    }
+}
+
+
+module.exports = {register,login,logout};
 

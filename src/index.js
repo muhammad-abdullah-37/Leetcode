@@ -5,8 +5,8 @@ require('dotenv').config({quiet :true,path : path.join(__dirname,('../.env'))});
 const PORT = process.env.PORT || 3000
 const cookieParser = require('cookie-parser');
 const main = require('./config/db');
-const register = require('./routes/userAuth');
-const login = require('./routes/userAuth');
+const authRouter = require('./routes/userAuth');
+const redisClient = require('./config/redis');
 
 
 
@@ -17,18 +17,20 @@ app.use(cookieParser())
 
 
 // API Mounting
-app.use('/user',register);
-app.use('/user',login);
+app.use('/user',authRouter);
 
 
 
+const initializeConnection = async () => {
+    try {
+        await Promise.all([main(), redisClient.connect()])
+        console.log(`DB Connection Successful`);
+        app.listen(PORT, () => {
+        console.log(`App is Listening at PORT : ${PORT}`);
+})
+    } catch (error) {
+        console.log(`Error In Connections : ${error}`);
+    }
+}
 // DB Connection Call
-main()
-.then(()=> {
-    app.listen(PORT, () => {
-    console.log(`App is Listening at PORT : ${PORT}`);
-})
-})
-.catch((error) => {
-    console.log(`Error in DB Connection : ${error}`);
-})
+initializeConnection()

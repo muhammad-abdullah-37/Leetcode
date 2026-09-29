@@ -8,7 +8,6 @@ const mongoose = require('mongoose');
 async function main(){
     try {
         await mongoose.connect(process.env.MONGO_URI);
-        console.log(`DB Connection Successful`);
     } catch (error) {
         console.log(`Error in DB Connection : ${error}`);
     }
