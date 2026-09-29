@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const main = require('./config/db');
 const authRouter = require('./routes/userAuth');
 const redisClient = require('./config/redis');
+const problemRouter = require('./routes/problemCreator');
 
 
 
@@ -18,7 +19,7 @@ app.use(cookieParser())
 
 // API Mounting
 app.use('/user',authRouter);
-
+// app.use('/problem',problemRouter)
 
 
 const initializeConnection = async () => {
