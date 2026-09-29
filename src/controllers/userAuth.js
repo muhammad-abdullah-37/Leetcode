@@ -20,7 +20,7 @@ const register = async (req,res) => {
         // User Registeration
         const registeredUser = await User.create(req.body)
         // Token creation an sending while registering the user
-        const token = jwt.sign({_id : registeredUser._id ,emailId : emailId}, SECRET_KEY_FOR_COOKIE, {expiresIn : 60*60})
+        const token = jwt.sign({_id : registeredUser._id ,emailId : emailId, role:'user'}, SECRET_KEY_FOR_COOKIE, {expiresIn : 60*60})
         res.cookie("token",token,{maxAge :60*60*1000})
         res.status(201).send(`User Registered Successfully`);
     } catch (error) {
@@ -48,7 +48,7 @@ const login = async(req,res) => {
             throw new Error('Invalid Credentials');
         }
         // JWT token creation and sending in cookie
-        const token = jwt.sign({_id : targetUser._id, emailId : emailId},SECRET_KEY_FOR_COOKIE,{expiresIn : 60*60});
+        const token = jwt.sign({_id : targetUser._id, emailId : emailId,role:targetUser.role},SECRET_KEY_FOR_COOKIE,{expiresIn : 60*60});
         res.cookie("token",token);
         res.status(200).send('User Logged-In Successfully');
     } catch (error) { 
@@ -77,6 +77,27 @@ const logout = async (req,res) => {
     }
 }
 
+const adminRegister = async (req,res) => {
+      try {
+        // Extracting data from request body
+        let {emailId,password} = req.body;
+        // data validation
+        await validate(req.body);
+        // password hashing
+        const hashedPassword = await bcrypt.hash(password,10);
+        req.body.password = hashedPassword;
+        req.body.role = 'admin';
+        // User Registeration
+        const registeredUser = await User.create(req.body)
+        // Token creation an sending while registering the user
+        const token = jwt.sign({_id : registeredUser._id ,emailId : emailId, role:'user'}, SECRET_KEY_FOR_COOKIE, {expiresIn : 60*60})
+        res.cookie("token",token,{maxAge :60*60*1000})
+        res.status(201).send(`User Registered Successfully`);
+    } catch (error) {
+        res.status(400).send(`Error : ${error}`)
+    }
+}
 
-module.exports = {register,login,logout};
+
+module.exports = {register,login,logout,adminRegister};
 
