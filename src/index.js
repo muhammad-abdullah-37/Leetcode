@@ -19,7 +19,7 @@ app.use(cookieParser())
 
 // API Mounting
 app.use('/user',authRouter);
-// app.use('/problem',problemRouter)
+app.use('/problem',problemRouter)
 
 
 const initializeConnection = async () => {
