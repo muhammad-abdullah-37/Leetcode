@@ -1,16 +1,18 @@
 const express = require('express');
 const problemRouter = express.Router();
 const adminMiddleware = require('../middleware/adminMiddleware');
-const {createProblem} = require('../controllers/userProblem');
+const {createProblem,updateProblem,deleteProblem,getProblemById,getAllProblems,solvedAllProblem} = require('../controllers/userProblem');
+const userMiddleware = require('../middleware/userMiddleware');
 
 // Routes which needed Admin Access
 problemRouter.post('/create',adminMiddleware, createProblem);
-// problemRouter.patch('/:id',updateProblem);
-// problemRouter.delete('/:id',deleteProblem);
+problemRouter.patch('/update/:id',adminMiddleware,updateProblem);
+problemRouter.delete('/delete/:id',adminMiddleware,deleteProblem);
+
 // Routes which are available for Normal users
-// problemRouter.get('/:id',problemFetch);
-// problemRouter.get('/',getAllProblems);
-// problemRouter.get('/user',solvedProblem)
+problemRouter.get('/problemById/:id',userMiddleware,getProblemById);
+problemRouter.get('/getAllProblems',userMiddleware,getAllProblems);
+problemRouter.get('/problemSolvedByUser',userMiddleware,solvedAllProblem)
 
 module.exports = problemRouter;
 
