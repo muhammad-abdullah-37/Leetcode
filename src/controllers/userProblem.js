@@ -3,7 +3,6 @@ const Problem = require('../models/problem');
 
 // Function or Controller for creating a problem
 const createProblem = async(req,res) => {
-    console.log(`At the start of the problem creation`);
      // Extracting the problem data from the request
         const{title,description,difficulty,tags,visibleTestCases,hiddenTestCases,startCode,referenceSolution,problemCreator} = req.body;
     try {
@@ -21,7 +20,6 @@ const createProblem = async(req,res) => {
 
             // Submitting the batcht to the Judge0
             const submitResult = await submitBatch(submissions);
-            console.log(`Submit Result : ${submitResult.data}`);
             // Getting all the token in an array which are used to get the answers from the platform
             const resultToken = submitResult.map((value) => value.token);
             // Getting and storign the result based on tokens
@@ -75,7 +73,6 @@ const updateProblem = async(req,res) => {
 
             // Submitting the batcht to the Judge0
             const submitResult = await submitBatch(submissions);
-            console.log(`Submit Result : ${submitResult.data}`);
             // Getting all the token in an array which are used to get the answers from the platform
             const resultToken = submitResult.map((value) => value.token);
             // Getting and storign the result based on tokens
@@ -109,7 +106,6 @@ const deleteProblem = async(req,res) => {
 
         // Deleting the Problem or Question
         const deletedProblem = await Problem.findByIdAndDelete(id);
-
         if (!(deleteProblem)) {
             return res.status(404).send('Problem is Missing')
         }
@@ -129,7 +125,7 @@ const getProblemById = async(req,res) => {
         }
 
         // Getting the problem from DB
-        const getProblem = await Problem.findById(id);
+        const getProblem = await Problem.findById(id).select('_id title description difficulty tags visibleTestCases startCode referenceSolution'); // Select is used for selecting between multiple properties of the problem like not selecting any paid feature. 
         if (!(getProblem)) {
             return res.status(404).send('Problem Not Found');
         }
@@ -144,7 +140,7 @@ const getProblemById = async(req,res) => {
 const getAllProblems = async(req,res) => {
     try {
         // Finding all problems with a limit of 10 problems to a single page
-        const getProblems = await Problem.find({});
+        const getProblems = await Problem.find({}).select('_id title difficulty tags');
         if (getProblems.length === 0) {
             return res.status(404).send('Problems Not Found');
         }
