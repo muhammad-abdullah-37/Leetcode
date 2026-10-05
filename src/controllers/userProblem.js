@@ -24,7 +24,6 @@ const createProblem = async(req,res) => {
             const resultToken = submitResult.map((value) => value.token);
             // Getting and storign the result based on tokens
             const testResult = await submitToken(resultToken);
-            // console.log(`Test Result : ${testResult}`);
             // Iterating over each result for checking the status id to show the output to the user
             for (const test of testResult) {
                 if (test.status_id !==3) {
@@ -88,7 +87,7 @@ const updateProblem = async(req,res) => {
 
         // Storing the updated data or problem in DB
         const newProblem = await Problem.findByIdAndUpdate(id,{...req.body}, {runValidators : true,new:true});
-        res.status(200).send(newProblem);
+        res.status(200).send('Probolem Updated Successfully');
     } catch (error) {
         res.status(500).send(`Error in Problem Updating : ${error.message}`)
     }
