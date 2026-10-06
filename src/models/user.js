@@ -49,7 +49,13 @@ const userSchema = new Schema({
     },
 },{timestamps : true})
 
+// Using a post command , this post command runs on a particular function or process which is findOneDelete , here findOneAndDelete is mapped with the findByIdAndDelete of mongoose;
+userSchema.post('findOneAndDelete',async function (userInfo) {
+    if (userInfo) {
+        await mongoose.model('submissions').deleteMany({userId: userInfo._id})
 
+    }
+})
 const User = mongoose.model('user', userSchema);
 
 module.exports  = User

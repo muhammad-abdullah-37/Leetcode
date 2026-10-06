@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config({quiet : true});
 const SECRET_KEY_FOR_COOKIE = process.env.SECRET_KEY_FOR_COOKIE
+const Submission = require('../models/submission');
 
 // User Register controller
 const register = async (req,res) => {
@@ -77,6 +78,7 @@ const logout = async (req,res) => {
     }
 }
 
+//Admin register Controller
 const adminRegister = async (req,res) => {
       try {
         // Extracting data from request body
@@ -98,6 +100,18 @@ const adminRegister = async (req,res) => {
     }
 }
 
-
-module.exports = {register,login,logout,adminRegister};
+// User Profile delete Controller
+const deleteProfile = async(req,res) => {
+    try {
+        const userId = req.result._id;
+        // Deleting the user from the User Schema
+        await User.findByIdAndDelete(userId);
+        // Deleting the user data from the submission , mean deleting all the submitted questions
+        Submission.deleteMany({userId});
+        res.status(200).send(`Profile Deleted Successfully`);
+    } catch (error) {
+        res.status(500).send(`Erro in User Profile Delettion : ${error.message}`)
+    }
+}
+module.exports = {register,login,logout,adminRegister,deleteProfile};
 
