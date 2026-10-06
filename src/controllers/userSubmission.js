@@ -16,7 +16,6 @@ const submitCode = async(req,res) => {
         if (!userId || !problemId || !code || !language) {
             res.status(400).send('Fields Missing')
         }
-
         // Fetching the problem from DB to check the hidden testcases of the problem or code sent by user
         const problem = await Problem.findById(problemId);
         //Storing users code or comming data from the frontend before sending it to the judge0 (because judge0 server can crash ro network failure may cause the code loss)
