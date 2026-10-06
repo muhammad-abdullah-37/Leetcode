@@ -8,6 +8,7 @@ const main = require('./config/db');
 const authRouter = require('./routes/userAuth');
 const redisClient = require('./config/redis');
 const problemRouter = require('./routes/problemCreator');
+const submitRouter = require('./routes/submit')
 
 
 
@@ -19,7 +20,8 @@ app.use(cookieParser())
 
 // API Mounting
 app.use('/user',authRouter);
-app.use('/problem',problemRouter)
+app.use('/problem',problemRouter);
+app.use('/submission',submitRouter)
 
 
 const initializeConnection = async () => {

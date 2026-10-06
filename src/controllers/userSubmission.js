@@ -1,16 +1,15 @@
-const { memo } = require("react");
 const Problem = require("../models/problem");
 const Submission = require('../models/submission')
-const getLanguageById = require('../utils/ProblemUtility');
-const submitBatch = require('../utils/ProblemUtility')
-const submitToken = require('../utils/ProblemUtility')
+const {getLanguageById} = require('../utils/ProblemUtility');
+const {submitBatch} = require('../utils/ProblemUtility')
+const {submitToken} = require('../utils/ProblemUtility')
 
 // Submitting code
 const submitCode = async(req,res) => {
     try {
         // Extracting user and problem id for keeping details like who submitted which problem
         const userId = req.result._id;
-        const problemId = req.param._id;
+        const problemId = req.params.id;
         // Extracting the code and language;
         const {code,language} = req.body;
         // validaing the user id , code , problem id and language
@@ -54,7 +53,7 @@ const submitCode = async(req,res) => {
             runtime = runtime + parseFloat(test.time);
             memory = Math.max(memory,test.memory);
             } else{
-                if (test.status._id === 4) {
+                if (test.status_id === 4) {
                     status = 'error';
                     errorMessage = test.stderr;
                 } else{

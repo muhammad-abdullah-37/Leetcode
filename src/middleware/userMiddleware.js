@@ -20,7 +20,7 @@ const userMiddleware = async(req,res,next) => {
             throw new Error('Invalid Token')
         }
         // Finding user in DB using the id
-        const result = User.findById(_id);
+        const result = await User.findById(_id);
         if (!(result)) {
             throw new Error("User Doesn't Exist")
         }
@@ -29,7 +29,7 @@ const userMiddleware = async(req,res,next) => {
         if (isBlocked) {
             throw new Error('Invalid Token')
         }
-        res.result = result;
+        req.result = result;
         next()
     } catch (error) {
         res.status(401).send(`Error in token validation : ${error.message}`)
