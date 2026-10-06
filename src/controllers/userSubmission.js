@@ -69,6 +69,11 @@ const submitCode = async(req,res) => {
         submittedResult.runtime = runtime;
         submittedResult.memory = memory;
         await submittedResult.save()
+        // Adding the problemId in problem solved of the user schema for checking the total unique problems solved on the platform. Id will be added if is not present already for making it unique
+        if (!req.result.problemsSolved.includes(problemId)) {
+            req.result.problemsSolved.push(problemId);
+            await req.result.save();
+        }
         res.status(201).send(submittedResult)
     } catch (error) {
         res.status(500).send(`Error in Code Submission : ${error.message}`);

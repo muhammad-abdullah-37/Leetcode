@@ -1,5 +1,6 @@
 const {submitBatch,submitToken,getLanguageById} = require('../utils/ProblemUtility');
 const Problem = require('../models/problem');
+const User = require('../models/user');
 
 // Function or Controller for creating a problem
 const createProblem = async(req,res) => {
@@ -150,8 +151,18 @@ const getAllProblems = async(req,res) => {
     }
 }
 
-// Function or Controller for getting all problems which are solved by a user
-const solvedAllProblem = async(req,res) => {
-
+// Function or Controller for getting all problems or the total number of problems which are solved by a user
+const solvedAllProblemByUser = async(req,res) => {
+    try {
+        const userId = req.result;
+        // populating the problemsSolved for referenceing the infomation of a solved problem which is in the user and then in user using the problemsSolved property to reference the all sovled problems using populate method
+        const user = await User.findById(userId).populate({
+            path:'problemsSolved',
+            select:'_id title difficulty tags'
+        });
+        res.status(200).send(user.problemsSolved)
+    } catch (error) {
+        res.status(500).send(`Error in Solved All Problems By User : ${error.message}`)
+    }
 } 
-module.exports = {createProblem,updateProblem,deleteProblem,getProblemById,getAllProblems,solvedAllProblem};
+module.exports = {createProblem,updateProblem,deleteProblem,getProblemById,getAllProblems,solvedAllProblemByUser};
