@@ -1,6 +1,7 @@
 const {submitBatch,submitToken,getLanguageById} = require('../utils/ProblemUtility');
 const Problem = require('../models/problem');
 const User = require('../models/user');
+const Submission = require('../models/submission');
 
 // Function or Controller for creating a problem
 const createProblem = async(req,res) => {
@@ -165,4 +166,20 @@ const solvedAllProblemByUser = async(req,res) => {
         res.status(500).send(`Error in Solved All Problems By User : ${error.message}`)
     }
 } 
-module.exports = {createProblem,updateProblem,deleteProblem,getProblemById,getAllProblems,solvedAllProblemByUser};
+
+// Function or Controller for the all submissions of a problem by a user
+const submittedProblem = async(req,res) => {
+    try {
+        const userId = req.result._id;
+        const problemId = req.params._id;
+        const ans = await Submission.find({userId, problemId});
+        if (ans.length == 0) {
+            return res.status(200).send(`No Submission is Present`)
+        } 
+        res.status(200).send(ans)
+        // Finding
+    } catch (error) {
+        res.status(500).send(`Error in getting Submitted Problems : ${error.message}`)
+    }
+} 
+module.exports = {createProblem,updateProblem,deleteProblem,getProblemById,getAllProblems,solvedAllProblemByUser,submittedProblem};

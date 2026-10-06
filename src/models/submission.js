@@ -51,6 +51,8 @@ const submissionSchema = new Schema({
 {timestamps : true}
 ) 
 
+// Compound Indexing or indexing for creating the indexes to reduce the iteration time by combining two or more than two unique value like two id's of userId and problemId, here 1 being used for the ascending order. 
+submissionSchema.index({userId:1, problemId:1})
 const Submission = mongoose.model('submission',submissionSchema);
 
 module.exports = Submission;
