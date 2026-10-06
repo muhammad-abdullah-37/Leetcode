@@ -79,6 +79,38 @@ const submitCode = async(req,res) => {
         res.status(500).send(`Error in Code Submission : ${error.message}`);
     }
 }
+
+// Function or Controller for Running the code
+const runCode = async(req,res) => {
+     try {
+        // Extracting user and problem id for keeping details like who submitted which problem
+        const userId = req.result._id;
+        const problemId = req.params.id;
+        // Extracting the code and language;
+        const {code,language} = req.body;
+        // validaing the user id , code , problem id and language
+        if (!userId || !problemId || !code || !language) {
+            res.status(400).send('Fields Missing')
+        }
+        // Fetching the problem from DB to check the hidden testcases of the problem or code sent by user
+        const problem = await Problem.findById(problemId);
+      
+        // Sending or submitting code to judge0
+        const languageId = getLanguageById(language);
+        const submissions = problem.visibleTestCases.map((testcase) =>({
+            source_code:code,
+            language_id:languageId,
+            stdin:testcase.input,
+            expected_output:testcase.output
+        }))
+        const submitResult = await submitBatch(submissions);
+        const resultToken = await submitResult.map((value) => value.token);
+        const testResult = await submitToken(resultToken);
+        res.status(201).send(testResult);
+    } catch (error) {
+        res.status(500).send(`Error in Code Submission : ${error.message}`);
+    }
+}
   
 
-module.exports = {submitCode}
+module.exports = {submitCode,runCode}
