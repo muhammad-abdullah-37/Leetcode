@@ -20,10 +20,19 @@ const register = async (req,res) => {
         req.body.role = 'user';
         // User Registeration
         const registeredUser = await User.create(req.body)
+        // preparing reply for the response of the request form the frontend
+        const reply = {
+            firstName: registeredUser.firstName,
+            emailId  : register.emailId,
+            _id      : registeredUser._id
+        }
         // Token creation an sending while registering the user
         const token = jwt.sign({_id : registeredUser._id ,emailId : emailId, role:'user'}, SECRET_KEY_FOR_COOKIE, {expiresIn : 60*60})
         res.cookie("token",token,{maxAge :60*60*1000})
-        res.status(201).send(`User Registered Successfully`);
+    res.status(201).json({
+        user: reply,
+        message : 'User Registered Successfully'
+    });
     } catch (error) {
         res.status(400).send(`Error : ${error}`)
     }
@@ -48,10 +57,18 @@ const login = async(req,res) => {
         if (!(isLogenAllowed)) {
             throw new Error('Invalid Credentials');
         }
+        const reply = {
+            firstName : targetUser.firstName,
+            emailId   : targetUser.emailId,
+            _id       : targetUser._id
+        }
         // JWT token creation and sending in cookie
         const token = jwt.sign({_id : targetUser._id, emailId : emailId,role:targetUser.role},SECRET_KEY_FOR_COOKIE,{expiresIn : 60*60});
         res.cookie("token",token);
-        res.status(200).send('User Logged-In Successfully');
+        res.status(201).json({
+            user:reply,
+            message: 'User Logged In Successfully'
+        });
     } catch (error) { 
         res.status(400).send(`Error : ${error}`)
     }

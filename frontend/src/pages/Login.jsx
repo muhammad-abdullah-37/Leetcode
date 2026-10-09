@@ -40,7 +40,7 @@ function Login() {
                             {errors.password && (<span className='text-error'>{errors.password.message}</span>)}
                         </div>
 
-                        {/* Submit Button of Form */}
+                        {/* Login Button of Form */}
                         <div className='form-control mt-6 flex justify-center'>
                             <button type='submit' className='btn btn-primary'>Login</button>
                         </div>
